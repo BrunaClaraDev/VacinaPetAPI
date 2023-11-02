@@ -54,13 +54,13 @@ namespace Back_VacinaPet
                 }
 
                 var vacinasV4 = ValidarVacinaV(pet, dataHoje, idadePetDias, "V4");
-                foreach (VacinaDto vacina in vacinasV3)
+                foreach (VacinaDto vacina in vacinasV4)
                 {
                     vacinasDoPet.Add(vacina);
                 }
 
                 var vacinasV5 = ValidarVacinaV(pet, dataHoje, idadePetDias, "V5");
-                foreach (VacinaDto vacina in vacinasV3)
+                foreach (VacinaDto vacina in vacinasV5)
                 {
                     vacinasDoPet.Add(vacina);
                 }
