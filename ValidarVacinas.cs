@@ -14,8 +14,14 @@ namespace Back_VacinaPet
 
             if (pet.Raca == "Cachorro")
             {
-                var vacinasV8 = ValidarVacinaV8(pet, dataHoje, idadePetDias);
-                foreach(VacinaDto vacina in vacinasV8)
+                var vacinasV8 = ValidarVacinaV(pet, dataHoje, idadePetDias, "V8");
+                foreach (VacinaDto vacina in vacinasV8)
+                {
+                    vacinasDoPet.Add(vacina);
+                }
+
+                var vacinasV10 = ValidarVacinaV(pet, dataHoje, idadePetDias, "V10");
+                foreach (VacinaDto vacina in vacinasV10)
                 {
                     vacinasDoPet.Add(vacina);
                 }
@@ -26,79 +32,49 @@ namespace Back_VacinaPet
                     vacinasDoPet.Add(vacina);
                 }
 
-                var vacinasGiardiase = ValidarVacinaGiardiase(pet, dataHoje, idadePetDias);
+                var vacinasGiardiase = ValidarVacinaGiardiaseOuRinotraqueite(pet, dataHoje, idadePetDias, "Giardiase");
                 foreach (VacinaDto vacina in vacinasGiardiase)
                 {
                     vacinasDoPet.Add(vacina);
                 }
 
-                var vacinasRinotraqueite = ValidarVacinaRinotraqueite(pet, dataHoje, idadePetDias);
+                var vacinasRinotraqueite = ValidarVacinaGiardiaseOuRinotraqueite(pet, dataHoje, idadePetDias, "Rinotraqueite");
                 foreach (VacinaDto vacina in vacinasRinotraqueite)
                 {
                     vacinasDoPet.Add(vacina);
                 }
 
             }
-            if (pet.Raca == "Gato")
+            else if (pet.Raca == "Gato")
             {
+                var vacinasV3 = ValidarVacinaV(pet, dataHoje, idadePetDias, "V3");
+                foreach (VacinaDto vacina in vacinasV3)
+                {
+                    vacinasDoPet.Add(vacina);
+                }
 
+                var vacinasV4 = ValidarVacinaV(pet, dataHoje, idadePetDias, "V4");
+                foreach (VacinaDto vacina in vacinasV3)
+                {
+                    vacinasDoPet.Add(vacina);
+                }
+
+                var vacinasV5 = ValidarVacinaV(pet, dataHoje, idadePetDias, "V5");
+                foreach (VacinaDto vacina in vacinasV3)
+                {
+                    vacinasDoPet.Add(vacina);
+                }
+
+                var vacinasAntirrabica = ValidarVacinaAntirrabica(pet, dataHoje, idadePetDias);
+                foreach (VacinaDto vacina in vacinasAntirrabica)
+                {
+                    vacinasDoPet.Add(vacina);
+                }
             }
-            return vacinasDoPet;
-        }
-
-        public List<VacinaDto> ValidarVacinaV8(PetDto pet, DateTime dataHoje, int idadePetDias)
-        {
-            List<VacinaDto> vacinasDoPet = new List<VacinaDto>();
-
-            int quantV8 = (pet.VacinasTomadas.Where(vacina => vacina.NomeVacina.Contains("V8"))).Count();
-            var ultimaV8 = pet.VacinasTomadas.LastOrDefault(vacina => vacina.NomeVacina.Contains("V8"));
-            var ultimaDataV8 = ultimaV8 != null ? (int)(dataHoje - ultimaV8.DataVacina).TotalDays : 0;
-
-            var diasPrimeiraVacinaV8 = idadePetDias >= 45 ? 0 : 45 - idadePetDias;
-            int atrasadaOuNaoV8_2 = (30 - ultimaDataV8) <= 0 ? 0 : (30 - ultimaDataV8);
-            int atrasadaOuNaoV8_4 = (365 - ultimaDataV8) <= 0 ? 0 : (365 - ultimaDataV8);
-
-            VacinaDto v8_1 = new VacinaDto("V8", dataHoje.AddDays(diasPrimeiraVacinaV8));
-            VacinaDto v8_2 = new VacinaDto("V8", dataHoje.AddDays(diasPrimeiraVacinaV8 + 30));
-            VacinaDto v8_3 = new VacinaDto("V8", dataHoje.AddDays(diasPrimeiraVacinaV8 + 60));
-            VacinaDto v8_4 = new VacinaDto("V8", dataHoje.AddDays(diasPrimeiraVacinaV8 + 425));
-            VacinaDto v8_5 = new VacinaDto("V8", dataHoje.AddDays(diasPrimeiraVacinaV8 + 790));
-
-            switch (quantV8)
+            else
             {
-                case 0:
-                    vacinasDoPet.Add(v8_1);
-                    vacinasDoPet.Add(v8_2);
-                    vacinasDoPet.Add(v8_3);
-                    vacinasDoPet.Add(v8_4);
-                    vacinasDoPet.Add(v8_5);
-                    break;
-                case 1:
-                    v8_2 = new VacinaDto("V8", dataHoje.AddDays(atrasadaOuNaoV8_2));
-                    v8_3 = new VacinaDto("V8", dataHoje.AddDays(atrasadaOuNaoV8_2 + 30));
-                    v8_4 = new VacinaDto("V8", dataHoje.AddDays(atrasadaOuNaoV8_2 + 395));
-                    v8_5 = new VacinaDto("V8", dataHoje.AddDays(atrasadaOuNaoV8_2 + 760));
-                    vacinasDoPet.Add(v8_2);
-                    vacinasDoPet.Add(v8_3);
-                    vacinasDoPet.Add(v8_4);
-                    vacinasDoPet.Add(v8_5);
-                    break;
-                case 2:
-                    v8_3 = new VacinaDto("V8", dataHoje.AddDays(atrasadaOuNaoV8_2));
-                    v8_4 = new VacinaDto("V8", dataHoje.AddDays(atrasadaOuNaoV8_2 + 365));
-                    v8_5 = new VacinaDto("V8", dataHoje.AddDays(atrasadaOuNaoV8_2 + 730));
-                    vacinasDoPet.Add(v8_3);
-                    vacinasDoPet.Add(v8_4);
-                    vacinasDoPet.Add(v8_5);
-                    break;
-                default:
-                    v8_4 = new VacinaDto("V8", dataHoje.AddDays(atrasadaOuNaoV8_4));
-                    v8_5 = new VacinaDto("V8", dataHoje.AddDays(atrasadaOuNaoV8_4 + 365));
-                    vacinasDoPet.Add(v8_4);
-                    vacinasDoPet.Add(v8_5);
-                    break;
+                throw new Exception("ERRO! RAÇA DO PET NÃO ENCONTRADA");
             }
-
             return vacinasDoPet;
         }
 
@@ -134,89 +110,102 @@ namespace Back_VacinaPet
             return vacinasDoPet;
         }
 
-        public List<VacinaDto> ValidarVacinaGiardiase(PetDto pet, DateTime dataHoje, int idadePetDias)
+        public List<VacinaDto> ValidarVacinaGiardiaseOuRinotraqueite(PetDto pet, DateTime dataHoje, int idadePetDias, string tipoVacina)
         {
             List<VacinaDto> vacinasDoPet = new List<VacinaDto>();
 
-            int quantGiardiase = (pet.VacinasTomadas.Where(vacina => vacina.NomeVacina.Contains("Giardiase"))).Count();
-            var ultimaGiardiase = pet.VacinasTomadas.LastOrDefault(vacina => vacina.NomeVacina.Contains("Giardiase"));
-            var ultimaDataGiardiase = ultimaGiardiase != null ? (int)(dataHoje - ultimaGiardiase.DataVacina).TotalDays : 0;
+            int quantVacina = (pet.VacinasTomadas.Where(vacina => vacina.NomeVacina.Contains(tipoVacina))).Count();
+            var ultimaVacina = pet.VacinasTomadas.LastOrDefault(vacina => vacina.NomeVacina.Contains(tipoVacina));
+            var ultimaDataVacina = ultimaVacina != null ? (int)(dataHoje - ultimaVacina.DataVacina).TotalDays : 0;
 
-            var diasPrimeiraVacinaGiard = idadePetDias >= 45 ? 0 : 45 - idadePetDias;
-            int atrasadaOuNaoGiard_2 = (30 - ultimaDataGiardiase) <= 0 ? 0 : (30 - ultimaDataGiardiase);
-            int atrasadaOuNaoGiard_4 = (365 - ultimaDataGiardiase) <= 0 ? 0 : (365 - ultimaDataGiardiase);
+            var diasPrimeiraVacina = idadePetDias >= 45 ? 0 : 45 - idadePetDias;
+            int atrasadaOuNaoVacina_2 = (30 - ultimaDataVacina) <= 0 ? 0 : (30 - ultimaDataVacina);
+            int atrasadaOuNaoVacina_4 = (365 - ultimaDataVacina) <= 0 ? 0 : (365 - ultimaDataVacina);
 
-            VacinaDto giardiase_1 = new VacinaDto("Giardiase", dataHoje.AddDays(diasPrimeiraVacinaGiard));
-            VacinaDto giardiase_2 = new VacinaDto("Giardiase", dataHoje.AddDays(diasPrimeiraVacinaGiard + 30));
-            VacinaDto giardiase_3 = new VacinaDto("Giardiase", dataHoje.AddDays(diasPrimeiraVacinaGiard + 410));
-            VacinaDto giardiase_4 = new VacinaDto("Giardiase", dataHoje.AddDays(diasPrimeiraVacinaGiard + 775));
+            VacinaDto vacina_1 = new VacinaDto(tipoVacina, dataHoje.AddDays(diasPrimeiraVacina));
+            VacinaDto vacina_2 = new VacinaDto(tipoVacina, dataHoje.AddDays(diasPrimeiraVacina + 30));
+            VacinaDto vacina_3 = new VacinaDto(tipoVacina, dataHoje.AddDays(diasPrimeiraVacina + 410));
+            VacinaDto vacina_4 = new VacinaDto(tipoVacina, dataHoje.AddDays(diasPrimeiraVacina + 775));
 
-            switch (quantGiardiase)
+            switch (quantVacina)
             {
                 case 0:
-                    vacinasDoPet.Add(giardiase_1);
-                    vacinasDoPet.Add(giardiase_2);
-                    vacinasDoPet.Add(giardiase_3);
-                    vacinasDoPet.Add(giardiase_4);
+                    vacinasDoPet.Add(vacina_1);
+                    vacinasDoPet.Add(vacina_2);
+                    vacinasDoPet.Add(vacina_3);
+                    vacinasDoPet.Add(vacina_4);
                     break;
                 case 1:
-                    giardiase_2 = new VacinaDto("Giardiase", dataHoje.AddDays(atrasadaOuNaoGiard_2));
-                    giardiase_3 = new VacinaDto("Giardiase", dataHoje.AddDays(atrasadaOuNaoGiard_2 + 365));
-                    giardiase_4 = new VacinaDto("Giardiase", dataHoje.AddDays(atrasadaOuNaoGiard_2 + 730));
-                    vacinasDoPet.Add(giardiase_2);
-                    vacinasDoPet.Add(giardiase_3);
-                    vacinasDoPet.Add(giardiase_4);
+                    vacina_2 = new VacinaDto(tipoVacina, dataHoje.AddDays(atrasadaOuNaoVacina_2));
+                    vacina_3 = new VacinaDto(tipoVacina, dataHoje.AddDays(atrasadaOuNaoVacina_2 + 365));
+                    vacina_4 = new VacinaDto(tipoVacina, dataHoje.AddDays(atrasadaOuNaoVacina_2 + 730));
+                    vacinasDoPet.Add(vacina_2);
+                    vacinasDoPet.Add(vacina_3);
+                    vacinasDoPet.Add(vacina_4);
                     break;
                 default:
-                    giardiase_3 = new VacinaDto("Giardiase", dataHoje.AddDays(atrasadaOuNaoGiard_4));
-                    giardiase_4 = new VacinaDto("Giardiase", dataHoje.AddDays(atrasadaOuNaoGiard_4 + 365));
-                    vacinasDoPet.Add(giardiase_3);
-                    vacinasDoPet.Add(giardiase_4);
+                    vacina_3 = new VacinaDto(tipoVacina, dataHoje.AddDays(atrasadaOuNaoVacina_4));
+                    vacina_4 = new VacinaDto(tipoVacina, dataHoje.AddDays(atrasadaOuNaoVacina_4 + 365));
+                    vacinasDoPet.Add(vacina_3);
+                    vacinasDoPet.Add(vacina_4);
                     break;
             }
             return vacinasDoPet;
         }
 
-        public List<VacinaDto> ValidarVacinaRinotraqueite(PetDto pet, DateTime dataHoje, int idadePetDias)
+        public List<VacinaDto> ValidarVacinaV(PetDto pet, DateTime dataHoje, int idadePetDias, string tipoVacina)
         {
             List<VacinaDto> vacinasDoPet = new List<VacinaDto>();
 
-            int quantRinotraqueite = (pet.VacinasTomadas.Where(vacina => vacina.NomeVacina.Contains("Rinotraqueite"))).Count();
-            var ultimaRinotraqueite = pet.VacinasTomadas.LastOrDefault(vacina => vacina.NomeVacina.Contains("Rinotraqueite"));
-            var ultimaDataRinotraqueite = ultimaRinotraqueite != null ? (int)(dataHoje - ultimaRinotraqueite.DataVacina).TotalDays : 0;
+            int quantV = (pet.VacinasTomadas.Where(vacina => vacina.NomeVacina.Contains(tipoVacina))).Count();
+            var ultimaV = pet.VacinasTomadas.LastOrDefault(vacina => vacina.NomeVacina.Contains(tipoVacina));
+            var ultimaDataV = ultimaV != null ? (int)(dataHoje - ultimaV.DataVacina).TotalDays : 0;
 
-            var diasPrimeiraVacinaRino = idadePetDias >= 45 ? 0 : 45 - idadePetDias;
-            int atrasadaOuNaoRino_2 = (30 - ultimaDataRinotraqueite) <= 0 ? 0 : (30 - ultimaDataRinotraqueite);
-            int atrasadaOuNaoRino_4 = (365 - ultimaDataRinotraqueite) <= 0 ? 0 : (365 - ultimaDataRinotraqueite);
+            var diasPrimeiraVacinaV = idadePetDias >= 45 ? 0 : 45 - idadePetDias;
+            int atrasadaOuNaoV_2 = (30 - ultimaDataV) <= 0 ? 0 : (30 - ultimaDataV);
+            int atrasadaOuNaoV_4 = (365 - ultimaDataV) <= 0 ? 0 : (365 - ultimaDataV);
 
-            VacinaDto rinotraqueite_1 = new VacinaDto("Rinotraqueite", dataHoje.AddDays(diasPrimeiraVacinaRino));
-            VacinaDto rinotraqueite_2 = new VacinaDto("Rinotraqueite", dataHoje.AddDays(diasPrimeiraVacinaRino + 30));
-            VacinaDto rinotraqueite_3 = new VacinaDto("Rinotraqueite", dataHoje.AddDays(diasPrimeiraVacinaRino + 410));
-            VacinaDto rinotraqueite_4 = new VacinaDto("Rinotraqueite", dataHoje.AddDays(diasPrimeiraVacinaRino + 775));
+            VacinaDto v_1 = new VacinaDto(tipoVacina, dataHoje.AddDays(diasPrimeiraVacinaV));
+            VacinaDto v_2 = new VacinaDto(tipoVacina, dataHoje.AddDays(diasPrimeiraVacinaV + 30));
+            VacinaDto v_3 = new VacinaDto(tipoVacina, dataHoje.AddDays(diasPrimeiraVacinaV + 60));
+            VacinaDto v_4 = new VacinaDto(tipoVacina, dataHoje.AddDays(diasPrimeiraVacinaV + 425));
+            VacinaDto v_5 = new VacinaDto(tipoVacina, dataHoje.AddDays(diasPrimeiraVacinaV + 790));
 
-            switch (quantRinotraqueite)
+            switch (quantV)
             {
                 case 0:
-                    vacinasDoPet.Add(rinotraqueite_1);
-                    vacinasDoPet.Add(rinotraqueite_2);
-                    vacinasDoPet.Add(rinotraqueite_3);
-                    vacinasDoPet.Add(rinotraqueite_4);
+                    vacinasDoPet.Add(v_1);
+                    vacinasDoPet.Add(v_2);
+                    vacinasDoPet.Add(v_3);
+                    vacinasDoPet.Add(v_4);
+                    vacinasDoPet.Add(v_5);
                     break;
                 case 1:
-                    rinotraqueite_2 = new VacinaDto("Rinotraqueite", dataHoje.AddDays(atrasadaOuNaoRino_2));
-                    rinotraqueite_3 = new VacinaDto("Rinotraqueite", dataHoje.AddDays(atrasadaOuNaoRino_2 + 365));
-                    rinotraqueite_4 = new VacinaDto("Rinotraqueite", dataHoje.AddDays(atrasadaOuNaoRino_2 + 730));
-                    vacinasDoPet.Add(rinotraqueite_2);
-                    vacinasDoPet.Add(rinotraqueite_3);
-                    vacinasDoPet.Add(rinotraqueite_4);
+                    v_2 = new VacinaDto(tipoVacina, dataHoje.AddDays(atrasadaOuNaoV_2));
+                    v_3 = new VacinaDto(tipoVacina, dataHoje.AddDays(atrasadaOuNaoV_2 + 30));
+                    v_4 = new VacinaDto(tipoVacina, dataHoje.AddDays(atrasadaOuNaoV_2 + 395));
+                    v_5 = new VacinaDto(tipoVacina, dataHoje.AddDays(atrasadaOuNaoV_2 + 760));
+                    vacinasDoPet.Add(v_2);
+                    vacinasDoPet.Add(v_3);
+                    vacinasDoPet.Add(v_4);
+                    vacinasDoPet.Add(v_5);
+                    break;
+                case 2:
+                    v_3 = new VacinaDto(tipoVacina, dataHoje.AddDays(atrasadaOuNaoV_2));
+                    v_4 = new VacinaDto(tipoVacina, dataHoje.AddDays(atrasadaOuNaoV_2 + 365));
+                    v_5 = new VacinaDto(tipoVacina, dataHoje.AddDays(atrasadaOuNaoV_2 + 730));
+                    vacinasDoPet.Add(v_3);
+                    vacinasDoPet.Add(v_4);
+                    vacinasDoPet.Add(v_5);
                     break;
                 default:
-                    rinotraqueite_3 = new VacinaDto("Rinotraqueite", dataHoje.AddDays(atrasadaOuNaoRino_4));
-                    rinotraqueite_4 = new VacinaDto("Rinotraqueite", dataHoje.AddDays(atrasadaOuNaoRino_4 + 365));
-                    vacinasDoPet.Add(rinotraqueite_3);
-                    vacinasDoPet.Add(rinotraqueite_4);
+                    v_4 = new VacinaDto(tipoVacina, dataHoje.AddDays(atrasadaOuNaoV_4));
+                    v_5 = new VacinaDto(tipoVacina, dataHoje.AddDays(atrasadaOuNaoV_4 + 365));
+                    vacinasDoPet.Add(v_4);
+                    vacinasDoPet.Add(v_5);
                     break;
             }
+
             return vacinasDoPet;
         }
     }
