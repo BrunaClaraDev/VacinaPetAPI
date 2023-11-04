@@ -11,11 +11,27 @@ namespace Back_VacinaPet.Controllers
     [Route("[controller]")]
     public class VacinasController : ControllerBase
     {
-        [HttpPost]
-        public List<VacinaDto> GetVacinas(PetDto pet)
+        private readonly IVacinaRepositorio _vacinaRepositorio;
+        private readonly IPetRepositorio _petRepositorio;
+        private readonly IValidarVacinas _validarVacinas;
+
+        public VacinasController(IVacinaRepositorio vacinaRepositorio, IPetRepositorio petRepositorio, IValidarVacinas validarVacinas)
         {
-            var classe = new ValidarVacinas();
-            return classe.PegaVacinaPet(pet);
+            _vacinaRepositorio = vacinaRepositorio;
+            _petRepositorio = petRepositorio;
+            _validarVacinas = validarVacinas;
+        }
+
+        [HttpPost]
+        public async Task<List<Vacina>> GetVacinasAsync(Pet pet)
+        {
+            var vacinasTomar = _validarVacinas.PegaVacinaPet(pet);
+            await Task.WhenAll(
+                _petRepositorio.SalvarPetAsync(pet),
+                _vacinaRepositorio.SalvarVacinasAsync(vacinasTomar)
+                );
+
+            return vacinasTomar;
         }
     }
 }
