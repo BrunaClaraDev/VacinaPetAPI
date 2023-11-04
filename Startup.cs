@@ -32,10 +32,7 @@ namespace Back_VacinaPet
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Back_VacinaPet", Version = "v1" });
             });
-            services.AddScoped<IVacinaRepositorio, VacinaRepositorio>();
-            services.AddScoped<IPetRepositorio, PetRepositorio>();
             services.AddScoped<IValidarVacinas, ValidarVacinas>();
-            services.AddScoped<DbSessao>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

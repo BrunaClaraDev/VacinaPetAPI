@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Back_VacinaPet.Controllers
@@ -11,27 +10,18 @@ namespace Back_VacinaPet.Controllers
     [Route("[controller]")]
     public class VacinasController : ControllerBase
     {
-        private readonly IVacinaRepositorio _vacinaRepositorio;
-        private readonly IPetRepositorio _petRepositorio;
+
         private readonly IValidarVacinas _validarVacinas;
 
-        public VacinasController(IVacinaRepositorio vacinaRepositorio, IPetRepositorio petRepositorio, IValidarVacinas validarVacinas)
+        public VacinasController(IValidarVacinas validarVacinas)
         {
-            _vacinaRepositorio = vacinaRepositorio;
-            _petRepositorio = petRepositorio;
             _validarVacinas = validarVacinas;
         }
 
         [HttpPost]
         public async Task<List<Vacina>> GetVacinasAsync(Pet pet)
         {
-            var vacinasTomar = _validarVacinas.PegaVacinaPet(pet);
-            await Task.WhenAll(
-                _petRepositorio.SalvarPetAsync(pet),
-                _vacinaRepositorio.SalvarVacinasAsync(vacinasTomar)
-                );
-
-            return vacinasTomar;
+            return  _validarVacinas.PegaVacinaPet(pet);
         }
     }
 }
