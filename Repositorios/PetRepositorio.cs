@@ -1,10 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Back_VacinaPet
@@ -35,19 +33,22 @@ namespace Back_VacinaPet
 
                 try
                 {
-                    var insertPet = @"
-                                    IF NOT EXISTS (SELECT 1 FROM VacinaPet.dbo.Pet WHERE IdPet = @idPet)
-                                    BEGIN
-                                        INSERT INTO VacinaPet.dbo.Pet (DataNascimento, Nome, Raca, Genero)
-                                        VALUES (@dataNascimento, @nome, @raca, @genero);
-                                    END";
+                    var insertPet = @"MERGE INTO VacinaPet.dbo.Pet AS Target
+                                    USING (VALUES (@idPet, @dataNascimento, @nome, @raca, @genero)) AS Source (IdPet, DataNascimento, Nome, Raca, Genero)
+                                    ON Target.IdPet = Source.IdPet
+                                    WHEN MATCHED THEN
+                                        UPDATE SET
+                                            Target.DataNascimento = Source.DataNascimento, Target.Nome = Source.Nome, Target.Raca = Source.Raca, Target.Genero = Source.Genero
+                                    WHEN NOT MATCHED THEN
+                                        INSERT (DataNascimento, Nome, Raca, Genero)
+                                        VALUES (Source.DataNascimento, Source.Nome, Source.Raca, Source.Genero);";
 
                     await _db.Connection.ExecuteAsync(insertPet,
                              new
                              {
                                  idPet = pet.IdPet,
                                  nome = pet.Nome,
-                                 dataNascimento = pet.DataNascimento.ToString("dd-MM-yyyy"),
+                                 dataNascimento = pet.DataNascimento.ToString("yyyy-MM-dd"),
                                  raca = pet.Raca,
                                  genero = pet.Genero
                              });
@@ -69,7 +70,7 @@ namespace Back_VacinaPet
             
             _logger.LogInformation($"ErrosFK:{ErroForeignKey} - ErrosPK: {ErroPrimaryKey}");
             TimeSpan ts = stopwatch.Elapsed;
-            _logger.LogInformation("Tempo de duracao {0:00}:{1:00}:{2:00} em Vacinas ", ts.Hours, ts.Minutes, ts.Seconds);
+            _logger.LogInformation("Tempo de duracao {0:00}:{1:00}:{2:00} em Pet ", ts.Hours, ts.Minutes, ts.Seconds);
         }
     }
 }

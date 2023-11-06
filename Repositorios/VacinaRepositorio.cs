@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Back_VacinaPet
@@ -35,29 +34,24 @@ namespace Back_VacinaPet
 
             foreach (Vacina vacina in vacinas)
             {
-
                 try
                 {
-                    var insertVacinas = @"BEGIN
-                                            IF NOT EXISTS (SELECT V.NomeVacina FROM VacinaPet.dbo.Vacina V WHERE V.NomeVacina = @nomeVacina AND V.DataVacina = @dataVacina AND V.IdPet = @idPet)
-                                            BEGIN
-                                        INSERT INTO VacinaPet.dbo.Vacina (IdPet, NomeVacina, DataVacina, SobreVacina)
-                                        VALUES (@idPet, @nomeVacina, @dataVacina, @sobreVacina);
-                                        END
-                                        ELSE
-                                        BEGIN
-                                        UPDATE VacinaPet.dbo.Vacina
-                                        SET NomeVacina = @nomeVacina, DataVacina = @dataVacina, SobreVacina = @sobreVacina
-                                        WHERE IdPet = @idPet;
-                                            END
-                                        END";
+                    var insertVacinas = @"MERGE INTO VacinaPet.dbo.Vacina AS Target
+                                        USING (VALUES (@idPet, @nomeVacina, @dataVacina, @sobreVacina)) AS Source (IdPet, NomeVacina, DataVacina, SobreVacina)
+                                        ON Target.IdPet = Source.IdPet AND Target.NomeVacina = Source.NomeVacina AND Target.DataVacina = Source.DataVacina
+                                        WHEN MATCHED THEN
+                                            UPDATE SET Target.SobreVacina = Source.SobreVacina
+                                        WHEN NOT MATCHED THEN
+                                            INSERT (IdPet, NomeVacina, DataVacina, SobreVacina)
+                                            VALUES (Source.IdPet, Source.NomeVacina, Source.DataVacina, Source.SobreVacina);";
+
 
                     await _db.Connection.ExecuteAsync(insertVacinas,
                              new
                              {
                                  idPet = vacina.IdPet,
                                  nomeVacina = vacina.NomeVacina,
-                                 dataVacina = vacina.DataVacina.ToString("dd-MM-yyyy"),
+                                 dataVacina = vacina.DataVacina.ToString("yyyy-MM-dd"),
                                  sobreVacina = vacina.SobreVacina
                              });
 

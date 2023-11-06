@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Back_VacinaPet
 {
@@ -33,13 +32,13 @@ namespace Back_VacinaPet
                     vacinasDoPet.Add(vacina);
                 }
 
-                var vacinasGiardiase = ValidarVacinaGiardiaseOuRinotraqueiteAsync(pet, dataHoje, idadePetDias, "Giardiase");
+                var vacinasGiardiase = ValidarVacinaGiardiaseOuRinotraqueite(pet, dataHoje, idadePetDias, "Giardiase");
                 foreach (Vacina vacina in vacinasGiardiase)
                 {
                     vacinasDoPet.Add(vacina);
                 }
 
-                var vacinasRinotraqueite = ValidarVacinaGiardiaseOuRinotraqueiteAsync(pet, dataHoje, idadePetDias, "Rinotraqueite");
+                var vacinasRinotraqueite = ValidarVacinaGiardiaseOuRinotraqueite(pet, dataHoje, idadePetDias, "Rinotraqueite");
                 foreach (Vacina vacina in vacinasRinotraqueite)
                 {
                     vacinasDoPet.Add(vacina);
@@ -77,11 +76,6 @@ namespace Back_VacinaPet
                 throw new Exception("ERRO! RAÇA DO PET NÃO ENCONTRADA");
             }
 
-            foreach (Vacina vacina in pet.VacinasTomadas)
-            {
-                vacinasDoPet.Add(vacina);
-            }
-
             return vacinasDoPet;
         }
 
@@ -117,7 +111,7 @@ namespace Back_VacinaPet
             return vacinasDoPet;
         }
 
-        public List<Vacina> ValidarVacinaGiardiaseOuRinotraqueiteAsync(Pet pet, DateTime dataHoje, int idadePetDias, string tipoVacina)
+        public List<Vacina> ValidarVacinaGiardiaseOuRinotraqueite(Pet pet, DateTime dataHoje, int idadePetDias, string tipoVacina)
         {
             List<Vacina> vacinasDoPet = new List<Vacina>();
 

@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Back_VacinaPet.Controllers
@@ -27,9 +24,12 @@ namespace Back_VacinaPet.Controllers
         {
             var vacinasTomar = _validarVacinas.PegaVacinaPet(pet);
             await Task.WhenAll(
-                _petRepositorio.SalvarPetAsync(pet),
-                _vacinaRepositorio.SalvarVacinasAsync(vacinasTomar)
+                _petRepositorio.SalvarPetAsync(pet)
                 );
+            await Task.WhenAll(
+               _vacinaRepositorio.SalvarVacinasAsync(vacinasTomar)
+               );
+
 
             return vacinasTomar;
         }
